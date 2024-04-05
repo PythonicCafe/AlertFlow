@@ -1,13 +1,13 @@
 services:
-  worker:  
+  worker:
     networks:
         - infodengue-prod_infodengue
 
-  scheduler:  
+  scheduler:
     networks:
         - infodengue-prod_infodengue
 
-  webserver:  
+  webserver:
     networks:
         - infodengue-prod_infodengue
 
