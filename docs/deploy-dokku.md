@@ -195,5 +195,10 @@ Para finalizar as configurações iniciais, conecte novamente no servidor e
 execute:
 
 ```shell
+dokku ps:scale web=1
+dokku ps:scale scheduler=1
+dokku ps:scale worker=1
+dokku ps:scale triggerer=1
+dokku ps:scale flower=1
 dokku letsencrypt:enable $APP_NAME
 ```
