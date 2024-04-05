@@ -69,13 +69,11 @@ RUN curl -LO https://github.com/conda-forge/miniforge/releases/latest/download/M
 
 # Create Python3.10 virtual env
 RUN source /home/airflow/mambaforge/bin/activate \
-  && conda install -c conda-forge "libgdal>=3.8.4" \
+  && conda install -yc conda-forge "libgdal==3.8.4" \
   && /usr/local/bin/python -m virtualenv /opt/envs/py310 --python="/opt/py310/bin/python3.10" \
   && sed -i "s/include-system-site-packages = false/include-system-site-packages = true/" /opt/envs/py310/pyvenv.cfg \
   && source /opt/envs/py310/bin/activate \
-  && pip install \
-  "satellite-weather-downloader >= 1.9.4" \
-  psycopg2
+  && pip install --no-cache-dir "gdal==3.8.4" "satellite-weather-downloader >= 1.9.4" psycopg2
 
 RUN echo "alias activate_episcanner='source /home/airflow/mambaforge/bin/activate episcanner-downloader'" >> /home/airflow/.bashrc
 
