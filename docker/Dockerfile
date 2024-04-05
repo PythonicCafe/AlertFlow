@@ -36,16 +36,11 @@ RUN apt-get update \
   build-essential \
   && rm -rf /var/lib/apt/lists/*
 
-
 RUN addgroup --gid ${HOST_GID} airflow \
   && usermod -u ${HOST_UID} -g ${HOST_GID} -d /home/airflow -s /bin/bash airflow \
   && echo "airflow ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/airflow \
   && chmod 0440 /etc/sudoers.d/airflow \
   && chown -R ${HOST_UID}:${HOST_GID} ${AIRFLOW_HOME}/ /opt/airflow/
-
-ENV PATH "$PATH:/home/airflow/.local/bin"
-ENV PATH "$PATH:/usr/bin/dirname"
-
 
 # Install Python 3.10
 RUN curl https://www.python.org/ftp/python/3.10.8/Python-3.10.8.tgz -o /tmp/Python-3.10.8.tgz \
