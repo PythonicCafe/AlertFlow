@@ -137,6 +137,55 @@ dokku postgres:create $PG_NAME
 dokku postgres:link $PG_NAME $APP_NAME
 ```
 
+### Parse PostgreSQL URL
+
+```shell
+parse_url() {
+  # extract the protocol
+  proto="$(echo $1 | grep :// | sed -e's,^\(.*://\).*,\1,g')"
+  # remove the protocol
+  url="$(echo ${1/$proto/})"
+  # extract the user (if any)
+  user="$(echo $url | grep @ | cut -d@ -f1)"
+
+  password="$(echo $user | grep : | cut -d: -f2)"
+  user="$(echo $user | grep : | cut -d: -f1)"
+  # extract the host and port
+  hostport="$(echo ${url/$user@/} | cut -d/ -f1)"
+  # by request host without port
+  host="$(echo $url | grep @ | cut -d@ -f2)"
+  host="$(echo $host | grep : | cut -d: -f1)"
+  # by request - try to extract the port
+  port="$(echo $hostport | sed -e 's,^.*:,:,g' -e 's,.*:\([0-9]*\).*,\1,g' -e 's,[^0-9],,g')"
+  # extract the path (if any)
+  path="$(echo $url | grep / | cut -d/ -f2-)"
+
+  if [[ "$2" == "database" ]];
+  then
+      echo $path
+  elif [[ "$2" == "host" ]];
+  then
+      echo $host
+  elif [[ "$2" == "password" ]];
+  then
+      echo $password
+  elif [[ "$2" == "user" ]];
+  then
+      echo $user
+  elif [[ "$2" == "port" ]];
+  then
+      echo $port
+  fi
+}
+
+export DATABASE_URL=$(dokku postgres:info pg_alertflow | awk '/Dsn/ {print $2}')
+export psql_host=$(parse_url $DATABASE_URL host)
+export psql_port=$(parse_url $DATABASE_URL port)
+export psql_database=$(parse_url $DATABASE_URL database)
+export psql_user=$(parse_url $DATABASE_URL user)
+export psql_password=$(parse_url $DATABASE_URL password)
+```
+
 ### Redis
 
 ```shell
@@ -147,27 +196,23 @@ dokku redis:link $REDIS_NAME $APP_NAME
 ### Variáveis de ambiente
 
 ```shell
-dokku config:set --no-restart $APP_NAME AIRFLOW_HOME="/opt/airflow"
-dokku config:set --no-restart $APP_NAME HOST_UID=1000
-dokku config:set --no-restart $APP_NAME HOST_GID=1000
-dokku config:set --no-restart $APP_NAME AIRFLOW_UID=5000
 dokku config:set --no-restart $APP_NAME _AIRFLOW_WWW_USER_USERNAME=airflow
 dokku config:set --no-restart $APP_NAME _AIRFLOW_WWW_USER_EMAIL=mail.example.com
 dokku config:set --no-restart $APP_NAME _AIRFLOW_WWW_USER_FIRST_NAME=Airflow
 dokku config:set --no-restart $APP_NAME _AIRFLOW_WWW_USER_LAST_NAME=User
 dokku config:set --no-restart $APP_NAME EMAIL_MAIN=mail.example.com
-dokku config:set --no-restart $APP_NAME PSQL_URI_MAIN="paste DATABASE_URL here"
-dokku config:set --no-restart $APP_NAME PSQL_USER_MAIN=psql_user
-dokku config:set --no-restart $APP_NAME PSQL_PASSWORD_MAIN=psql_password
-dokku config:set --no-restart $APP_NAME PSQL_HOST_MAIN=psql_host
-dokku config:set --no-restart $APP_NAME PSQL_PORT_MAIN=psql_port
-dokku config:set --no-restart $APP_NAME PSQL_DB_MAIN=psql_db
+dokku config:set --no-restart $APP_NAME PSQL_URI_MAIN=$DATABASE_URL
+dokku config:set --no-restart $APP_NAME PSQL_USER_MAIN=$psql_user
+dokku config:set --no-restart $APP_NAME PSQL_PASSWORD_MAIN=$psql_password
+dokku config:set --no-restart $APP_NAME PSQL_HOST_MAIN=$psql_host
+dokku config:set --no-restart $APP_NAME PSQL_PORT_MAIN=$psql_port
+dokku config:set --no-restart $APP_NAME PSQL_DB_MAIN=$psql_database
 dokku config:set --no-restart $APP_NAME CDSAPI_KEY=user-id:key
-dokku config:set --no-restart $APP_NAME AIRFLOW_PSQL_PASSWORD_MAIN=psql_password
-dokku config:set --no-restart $APP_NAME AIRFLOW_PSQL_PORT_MAIN=psql_port
-dokku config:set --no-restart $APP_NAME AIRFLOW_PSQL_USER_MAIN=psql_user
-dokku config:set --no-restart $APP_NAME AIRFLOW_PSQL_HOST_MAIN=psql_host
-dokku config:set --no-restart $APP_NAME AIRFLOW_PSQL_DB_MAIN=psql_db
+dokku config:set --no-restart $APP_NAME AIRFLOW_PSQL_PASSWORD_MAIN=$psql_password
+dokku config:set --no-restart $APP_NAME AIRFLOW_PSQL_PORT_MAIN=$psql_port
+dokku config:set --no-restart $APP_NAME AIRFLOW_PSQL_USER_MAIN=$psql_user
+dokku config:set --no-restart $APP_NAME AIRFLOW_PSQL_HOST_MAIN=$psql_host
+dokku config:set --no-restart $APP_NAME AIRFLOW_PSQL_DB_MAIN=$psql_database
 dokku config:set --no-restart $APP_NAME EPISCANNER_HOST_DATA="/opt/airflow/episcanner_data"
 ```
 
