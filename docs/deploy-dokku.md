@@ -130,37 +130,11 @@ dokku letsencrypt:set $APP_NAME email $ADMIN_EMAIL
 dokku domains:set $APP_NAME $DOMAIN
 ```
 
-### Variáveis de ambiente
-
-```shell
-dokku config:set --no-restart $APP_NAME AIRFLOW_UID=<AIRFLOW_UID>
-dokku config:set --no-restart $APP_NAME _AIRFLOW_WWW_USER_USERNAME=<_AIRFLOW_WWW_USER_USERNAME>
-dokku config:set --no-restart $APP_NAME _AIRFLOW_WWW_USER_EMAIL=<_AIRFLOW_WWW_USER_EMAIL>
-dokku config:set --no-restart $APP_NAME _AIRFLOW_WWW_USER_FIRST_NAME=<_AIRFLOW_WWW_USER_FIRST_NAME>
-dokku config:set --no-restart $APP_NAME _AIRFLOW_WWW_USER_LAST_NAME=<_AIRFLOW_WWW_USER_LAST_NAME>
-dokku config:set --no-restart $APP_NAME EMAIL_MAIN=<EMAIL_MAIN>
-dokku config:set --no-restart $APP_NAME PSQL_USER_MAIN=<PSQL_USER_MAIN>
-dokku config:set --no-restart $APP_NAME PSQL_PASSWORD_MAIN=<PSQL_PASSWORD_MAIN>
-dokku config:set --no-restart $APP_NAME PSQL_HOST_MAIN=<PSQL_HOST_MAIN>
-dokku config:set --no-restart $APP_NAME PSQL_PORT_MAIN=<PSQL_PORT_MAIN>
-dokku config:set --no-restart $APP_NAME PSQL_DB_MAIN=<PSQL_DB_MAIN>
-dokku config:set --no-restart $APP_NAME CDSAPI_KEY=<CDSAPI_KEY>
-dokku config:set --no-restart $APP_NAME AIRFLOW__CORE__FERNET_KEY=<AIRFLOW__CORE__FERNET_KEY>
-dokku config:set --no-restart $APP_NAME AIRFLOW_PSQL_PASSWORD_MAIN=<AIRFLOW_PSQL_PASSWORD_MAIN>
-dokku config:set --no-restart $APP_NAME AIRFLOW_PSQL_PORT_MAIN=<AIRFLOW_PSQL_PORT_MAIN>
-dokku config:set --no-restart $APP_NAME AIRFLOW_PSQL_USER_MAIN=<AIRFLOW_PSQL_USER_MAIN>
-dokku config:set --no-restart $APP_NAME AIRFLOW_PSQL_HOST_MAIN=<AIRFLOW_PSQL_HOST_MAIN>
-dokku config:set --no-restart $APP_NAME AIRFLOW_PSQL_DB_MAIN=<AIRFLOW_PSQL_DB_MAIN>
-dokku config:set --no-restart $APP_NAME EPISCANNER_HOST_DATA=<EPISCANNER_HOST_DATA>
-```
-
 ### PostgreSQL
 
 ```shell
 dokku postgres:create $PG_NAME
 dokku postgres:link $PG_NAME $APP_NAME
-
-dokku config:set --no-restart $APP_NAME PSQL_URI_MAIN="$DATABASE_URL"
 ```
 
 ### Redis
@@ -170,10 +144,52 @@ dokku redis:create $REDIS_NAME
 dokku redis:link $REDIS_NAME $APP_NAME
 ```
 
+### Variáveis de ambiente
+
+```shell
+dokku config:set --no-restart $APP_NAME AIRFLOW_HOME="/opt/airflow"
+dokku config:set --no-restart $APP_NAME HOST_UID=1000
+dokku config:set --no-restart $APP_NAME HOST_GID=1000
+dokku config:set --no-restart $APP_NAME AIRFLOW_UID=5000
+dokku config:set --no-restart $APP_NAME _AIRFLOW_WWW_USER_USERNAME=airflow
+dokku config:set --no-restart $APP_NAME _AIRFLOW_WWW_USER_EMAIL=mail.example.com
+dokku config:set --no-restart $APP_NAME _AIRFLOW_WWW_USER_FIRST_NAME=Airflow
+dokku config:set --no-restart $APP_NAME _AIRFLOW_WWW_USER_LAST_NAME=User
+dokku config:set --no-restart $APP_NAME EMAIL_MAIN=mail.example.com
+dokku config:set --no-restart $APP_NAME PSQL_URI_MAIN="paste DATABASE_URL here"
+dokku config:set --no-restart $APP_NAME PSQL_USER_MAIN=psql_user
+dokku config:set --no-restart $APP_NAME PSQL_PASSWORD_MAIN=psql_password
+dokku config:set --no-restart $APP_NAME PSQL_HOST_MAIN=psql_host
+dokku config:set --no-restart $APP_NAME PSQL_PORT_MAIN=psql_port
+dokku config:set --no-restart $APP_NAME PSQL_DB_MAIN=psql_db
+dokku config:set --no-restart $APP_NAME CDSAPI_KEY=user-id:key
+dokku config:set --no-restart $APP_NAME AIRFLOW_PSQL_PASSWORD_MAIN=psql_password
+dokku config:set --no-restart $APP_NAME AIRFLOW_PSQL_PORT_MAIN=psql_port
+dokku config:set --no-restart $APP_NAME AIRFLOW_PSQL_USER_MAIN=psql_user
+dokku config:set --no-restart $APP_NAME AIRFLOW_PSQL_HOST_MAIN=psql_host
+dokku config:set --no-restart $APP_NAME AIRFLOW_PSQL_DB_MAIN=psql_db
+dokku config:set --no-restart $APP_NAME EPISCANNER_HOST_DATA="/opt/airflow/episcanner_data"
+```
+
+### Dockerfile path
+
+É necessário indicar o caminho do Dockerfile, que não está na raiz do projeto.
+
+```shell
+dokku builder-dockerfile:set $APP_NAME dockerfile-path ./docker/Dockerfile
+```
+
+### Dokku Docker build options
+
+```shell
+dokku docker-options:add $APP_NAME build '--build-arg HOST_UID=1000'
+dokku docker-options:add $APP_NAME build '--build-arg HOST_GID=1000'
+```
+
 ### Proxy/Ports
 
 ```shell
-dokku ports:set $APP_NAME http:80:3000
+dokku ports:set $APP_NAME http:80:8080
 ```
 
 Com o app criado e configurado, agora precisamos fazer o primeiro deployment,
