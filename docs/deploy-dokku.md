@@ -197,10 +197,10 @@ dokku redis:link $REDIS_NAME $APP_NAME
 
 ```shell
 dokku config:set --no-restart $APP_NAME _AIRFLOW_WWW_USER_USERNAME=airflow
-dokku config:set --no-restart $APP_NAME _AIRFLOW_WWW_USER_EMAIL=mail.example.com
+dokku config:set --no-restart $APP_NAME _AIRFLOW_WWW_USER_EMAIL=mail@example.com
 dokku config:set --no-restart $APP_NAME _AIRFLOW_WWW_USER_FIRST_NAME=Airflow
 dokku config:set --no-restart $APP_NAME _AIRFLOW_WWW_USER_LAST_NAME=User
-dokku config:set --no-restart $APP_NAME EMAIL_MAIN=mail.example.com
+dokku config:set --no-restart $APP_NAME EMAIL_MAIN=mail@example.com
 dokku config:set --no-restart $APP_NAME PSQL_URI_MAIN=$DATABASE_URL
 dokku config:set --no-restart $APP_NAME PSQL_USER_MAIN=$psql_user
 dokku config:set --no-restart $APP_NAME PSQL_PASSWORD_MAIN=$psql_password
@@ -228,7 +228,7 @@ dokku builder-dockerfile:set $APP_NAME dockerfile-path ./docker/Dockerfile
 
 ```shell
 dokku docker-options:add $APP_NAME build '--build-arg HOST_UID=1000'
-dokku docker-options:add $APP_NAME build '--build-arg HOST_GID=1000'
+dokku docker-options:add $APP_NAME build '--build-arg HOST_GID=0'
 ```
 
 ### Proxy/Ports
