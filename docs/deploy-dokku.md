@@ -213,6 +213,7 @@ dokku config:set --no-restart $APP_NAME AIRFLOW_PSQL_PORT_MAIN=$psql_port
 dokku config:set --no-restart $APP_NAME AIRFLOW_PSQL_USER_MAIN=$psql_user
 dokku config:set --no-restart $APP_NAME AIRFLOW_PSQL_HOST_MAIN=$psql_host
 dokku config:set --no-restart $APP_NAME AIRFLOW_PSQL_DB_MAIN=$psql_database
+dokku config:set --no-restart $APP_NAME AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=$DATABASE_URL
 dokku config:set --no-restart $APP_NAME EPISCANNER_HOST_DATA="/opt/airflow/episcanner_data"
 ```
 
