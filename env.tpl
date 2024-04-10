@@ -40,3 +40,6 @@ CDSAPI_KEY=${CDSAPI_KEY}
 
 # Extras
 AIRFLOW__CORE__FERNET_KEY=${AIRFLOW__CORE__FERNET_KEY}
+
+# Redis Connection (broker)
+REDIS_URL="redis://redis:6379/0"
