@@ -215,6 +215,27 @@ dokku config:set --no-restart $APP_NAME AIRFLOW_PSQL_HOST_MAIN=$psql_host
 dokku config:set --no-restart $APP_NAME AIRFLOW_PSQL_DB_MAIN=$psql_database
 dokku config:set --no-restart $APP_NAME AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=$DATABASE_URL
 dokku config:set --no-restart $APP_NAME EPISCANNER_HOST_DATA="/opt/airflow/episcanner_data"
+dokku config:set --no-restart $APP_NAME AIRFLOW__CORE__FERNET_KEY="ZaO8yMwt2G1TEIWCHN4Qu0dsQLhE8CKPDDy8S80hEow="
+```
+
+### fernet_key
+
+Você pode gerar a fernet_key com Python:
+
+```shell
+pip install cryptography
+```
+
+```python
+from cryptography.fernet import Fernet
+key = Fernet.generate_key()
+print(key.decode())
+```
+
+Então poderá colocar o valor da chave na variável de ambiente:
+
+```shell
+dokku config:set --no-restart $APP_NAME AIRFLOW__CORE__FERNET_KEY="generated fernet key"
 ```
 
 ### Dockerfile path
