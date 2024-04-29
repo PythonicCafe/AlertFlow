@@ -216,6 +216,10 @@ dokku config:set --no-restart $APP_NAME AIRFLOW_PSQL_DB_MAIN=$psql_database
 dokku config:set --no-restart $APP_NAME AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=$DATABASE_URL
 dokku config:set --no-restart $APP_NAME EPISCANNER_HOST_DATA="/opt/airflow/episcanner_data"
 dokku config:set --no-restart $APP_NAME AIRFLOW__CORE__FERNET_KEY="ZaO8yMwt2G1TEIWCHN4Qu0dsQLhE8CKPDDy8S80hEow="
+
+# As variáveis HOST_UID e HOST_GID também são necessárias
+# nas configurações do app, para serem usadas no entrypoint
+dokku config:set --no-restart $APP_NAME HOST_UID=1000 HOST_GID=0
 ```
 
 ### fernet_key
