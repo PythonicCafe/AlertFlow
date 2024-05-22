@@ -119,6 +119,9 @@ export APP_NAME="alertflow"
 export DOMAIN="alertflow.pythonic.cafe"
 export PG_NAME="pg_$APP_NAME"
 export REDIS_NAME="redis_$APP_NAME"
+export HOST_UID=1000
+export HOST_GID=0
+export STORAGE_PATH=/var/lib/dokku/data/storage/$APP_NAME
 ```
 
 Depois que as variáveis foram definidas, podemos criar o app e fazer as configurações iniciais:
@@ -219,7 +222,17 @@ dokku config:set --no-restart $APP_NAME AIRFLOW__CORE__FERNET_KEY="ZaO8yMwt2G1TE
 
 # As variáveis HOST_UID e HOST_GID também são necessárias
 # nas configurações do app, para serem usadas no entrypoint
-dokku config:set --no-restart $APP_NAME HOST_UID=1000 HOST_GID=0
+dokku config:set --no-restart $APP_NAME HOST_UID=$HOST_UID HOST_GID=$HOST_GID
+```
+
+### Volumes
+
+```shell
+sudo mkdir -p "$STORAGE_PATH"/{dags,logs,plugins}
+sudo chown -R $HOST_UID:$HOST_GID "$STORAGE_PATH"
+dokku storage:mount $APP_NAME "$STORAGE_PATH/dags:/opt/airflow/dags"
+dokku storage:mount $APP_NAME "$STORAGE_PATH/logs:/opt/airflow/logs"
+dokku storage:mount $APP_NAME "$STORAGE_PATH/plugins:/opt/airflow/plugins"
 ```
 
 ### fernet_key
